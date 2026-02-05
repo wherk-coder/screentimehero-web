@@ -62,9 +62,12 @@ export default function Home() {
               <button className="px-4 py-2 text-[#3A7BFA] font-medium hover:bg-blue-50 rounded-lg transition-colors">
                 Sign In
               </button>
-              <button className="px-4 py-2 bg-[#3A7BFA] text-white font-medium rounded-lg hover:bg-blue-600 transition-colors">
+              <a 
+                href="/download"
+                className="px-4 py-2 bg-[#3A7BFA] text-white font-medium rounded-lg hover:bg-blue-600 transition-colors"
+              >
                 Start Free Trial
-              </button>
+              </a>
             </div>
 
             <button 
@@ -86,7 +89,7 @@ export default function Home() {
               <button onClick={() => scrollToSection("faq")} className="block w-full text-left py-2 text-gray-600">FAQ</button>
               <div className="pt-3 border-t border-gray-100 space-y-2">
                 <button className="w-full py-2 text-[#3A7BFA] font-medium">Sign In</button>
-                <button className="w-full py-2 bg-[#3A7BFA] text-white font-medium rounded-lg">Start Free Trial</button>
+                <a href="/download" className="block w-full py-2 bg-[#3A7BFA] text-white font-medium rounded-lg text-center">Start Free Trial</a>
               </div>
             </div>
           </div>
@@ -119,13 +122,14 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <motion.button 
-                className="w-full sm:w-auto px-8 py-4 bg-[#3A7BFA] text-white font-semibold rounded-xl text-lg hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/25"
+              <motion.a 
+                href="/download"
+                className="w-full sm:w-auto px-8 py-4 bg-[#3A7BFA] text-white font-semibold rounded-xl text-lg hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/25 text-center"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 Start Your Free Trial
-              </motion.button>
+              </motion.a>
               <motion.button 
                 className="w-full sm:w-auto px-8 py-4 bg-white text-[#1C1F26] font-semibold rounded-xl text-lg border-2 border-gray-200 hover:border-[#3A7BFA] hover:text-[#3A7BFA] transition-colors"
                 whileHover={{ scale: 1.02 }}
@@ -461,13 +465,14 @@ export default function Home() {
                 ))}
               </div>
 
-              <motion.button 
-                className="w-full py-4 bg-[#3A7BFA] text-white font-semibold rounded-xl text-lg hover:bg-blue-600 transition-colors"
+              <motion.a 
+                href="/download"
+                className="block w-full py-4 bg-[#3A7BFA] text-white font-semibold rounded-xl text-lg hover:bg-blue-600 transition-colors text-center"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 Start Free Trial
-              </motion.button>
+              </motion.a>
               
               <p className="text-center text-sm text-gray-500 mt-4">
                 Cancel anytime. No questions asked.
@@ -568,13 +573,14 @@ export default function Home() {
               Join thousands of families who've transformed screen time from a battle into motivation.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <motion.button 
-                className="w-full sm:w-auto px-8 py-4 bg-[#FFC300] text-[#1C1F26] font-semibold rounded-xl text-lg hover:bg-yellow-400 transition-colors"
+              <motion.a 
+                href="/download"
+                className="w-full sm:w-auto px-8 py-4 bg-[#FFC300] text-[#1C1F26] font-semibold rounded-xl text-lg hover:bg-yellow-400 transition-colors text-center"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 Start Your Free 7-Day Trial
-              </motion.button>
+              </motion.a>
             </div>
             <p className="mt-4 text-sm text-blue-200">No credit card required. Cancel anytime.</p>
           </motion.div>
