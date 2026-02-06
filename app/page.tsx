@@ -267,12 +267,14 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <div className="text-5xl font-bold mb-4" style={{ color: item.color }}>{item.step}</div>
-                <div 
-                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
-                  style={{ backgroundColor: `${item.color}20` }}
-                >
-                  <item.icon className="w-7 h-7" style={{ color: item.color }} />
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="text-4xl font-bold" style={{ color: item.color }}>{item.step}</div>
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center"
+                    style={{ backgroundColor: `${item.color}20` }}
+                  >
+                    <item.icon className="w-6 h-6" style={{ color: item.color }} />
+                  </div>
                 </div>
                 <h3 className="text-xl font-bold mb-3">{item.title}</h3>
                 <p className="text-gray-600">{item.description}</p>
