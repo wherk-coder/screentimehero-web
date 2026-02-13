@@ -1,0 +1,4358 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Screen Time Hero API",
+    "description": "Complete API documentation for the Screen Time Hero family chore and screen time management application",
+    "version": "2.0.0",
+    "contact": {
+      "name": "Screen Time Hero Support",
+      "email": "support@screentimehero.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://screen-time-hero-app-production.up.railway.app",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication and registration endpoints"
+    },
+    {
+      "name": "Profiles",
+      "description": "User profile management"
+    },
+    {
+      "name": "Tasks",
+      "description": "Task creation, management, and submissions"
+    },
+    {
+      "name": "Rewards",
+      "description": "Reward system and redemptions"
+    },
+    {
+      "name": "Screen Time",
+      "description": "Screen time rules, sessions, and balance management"
+    },
+    {
+      "name": "Monitoring & Devices",
+      "description": "Device registration and capabilities"
+    },
+    {
+      "name": "Notifications",
+      "description": "Push notifications and in-app notifications"
+    },
+    {
+      "name": "Education",
+      "description": "Educational content, quizzes, and completions"
+    },
+    {
+      "name": "Achievements & Badges",
+      "description": "Achievement tracking and badge management"
+    },
+    {
+      "name": "Analytics & Reports",
+      "description": "Analytics data and reporting"
+    },
+    {
+      "name": "App Management",
+      "description": "App catalog, groups, and presets"
+    },
+    {
+      "name": "Invitations",
+      "description": "Parent-child account linking invitations"
+    },
+    {
+      "name": "Settings",
+      "description": "Parent settings and preferences"
+    },
+    {
+      "name": "Upload",
+      "description": "File upload endpoints (avatars, proofs)"
+    },
+    {
+      "name": "Export",
+      "description": "Data export endpoints"
+    },
+    {
+      "name": "Admin/Debug",
+      "description": "Administrative and debugging endpoints"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Supabase JWT token obtained from login/signup"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "email": { "type": "string", "format": "email" },
+          "role": { "type": "string" },
+          "email_confirmed_at": { "type": "string", "format": "date-time", "nullable": true },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "first_name": { "type": "string", "nullable": true },
+          "last_name": { "type": "string", "nullable": true },
+          "role": { "type": "string", "enum": ["parent", "child"] },
+          "email": { "type": "string", "format": "email" },
+          "username": { "type": "string", "nullable": true },
+          "parent_id": { "type": "string", "format": "uuid", "nullable": true },
+          "avatar_url": { "type": "string", "nullable": true },
+          "points_balance": { "type": "integer", "default": 0 },
+          "screen_time_balance_minutes": { "type": "integer", "default": 0 },
+          "birth_month": { "type": "string", "nullable": true },
+          "birth_year": { "type": "string", "nullable": true },
+          "is_active": { "type": "boolean", "default": true },
+          "account_status": { "type": "string", "enum": ["active", "orphan", "archived"], "default": "active" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "parent_id": { "type": "string", "format": "uuid", "nullable": true },
+          "child_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string", "nullable": true },
+          "status": { "type": "string", "enum": ["active", "completed", "approved", "rejected", "deleted"] },
+          "due_date": { "type": "string", "format": "date-time", "nullable": true },
+          "reward_type": { "type": "string", "enum": ["screen_time", "cash", "gift_card", "points"], "nullable": true },
+          "reward_value": { "type": "number", "nullable": true },
+          "requires_proof": { "type": "boolean", "default": false },
+          "is_recurring": { "type": "boolean", "default": false },
+          "recurrence_pattern": { "type": "object", "nullable": true },
+          "effort_minutes": { "type": "integer", "nullable": true },
+          "requested_by": { "type": "string", "format": "uuid", "nullable": true },
+          "completed_at": { "type": "string", "format": "date-time", "nullable": true },
+          "rejected_at": { "type": "string", "format": "date-time", "nullable": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Reward": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "parent_id": { "type": "string", "format": "uuid" },
+          "child_id": { "type": "string", "format": "uuid", "nullable": true },
+          "reward_type": { "type": "string", "enum": ["screen_time", "cash", "gift_card", "points", "special_activity"] },
+          "title": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "value": { "type": "integer", "nullable": true },
+          "point_cost": { "type": "integer", "nullable": true },
+          "status": { "type": "string", "enum": ["available", "requested", "approved", "granted", "rejected", "archived"] },
+          "is_active": { "type": "boolean", "default": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "notification_id": { "type": "string", "format": "uuid" },
+          "user_id": { "type": "string", "format": "uuid" },
+          "parent_id": { "type": "string", "format": "uuid", "nullable": true },
+          "child_id": { "type": "string", "format": "uuid", "nullable": true },
+          "type": { "type": "string" },
+          "title": { "type": "string" },
+          "message": { "type": "string" },
+          "status": { "type": "string", "enum": ["read", "unread", "pending", "sent", "delivered"] },
+          "is_read": { "type": "boolean", "default": false },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Device": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "user_id": { "type": "string", "format": "uuid" },
+          "device_name": { "type": "string" },
+          "device_identifier": { "type": "string" },
+          "ios_version": { "type": "string", "nullable": true },
+          "family_sharing_enabled": { "type": "boolean", "default": false },
+          "screen_time_api_available": { "type": "boolean", "default": false },
+          "push_token": { "type": "string", "nullable": true },
+          "last_active": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "details": { "type": "string" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login with email/username and password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["password"],
+                "properties": {
+                  "email": { "type": "string" },
+                  "username": { "type": "string" },
+                  "password": { "type": "string", "format": "password" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "$ref": "#/components/schemas/User" },
+                    "session": { "type": "object" },
+                    "profile": { "$ref": "#/components/schemas/Profile" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/api/auth/mobile-login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Mobile login - returns authorization code",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["password"],
+                "properties": {
+                  "email": { "type": "string" },
+                  "username": { "type": "string" },
+                  "password": { "type": "string", "format": "password" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Auth code generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string" },
+                    "expires_in": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/exchange-code": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Exchange authorization code for session tokens",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code"],
+                "properties": {
+                  "code": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "$ref": "#/components/schemas/User" },
+                    "session": { "type": "object" },
+                    "profile": { "$ref": "#/components/schemas/Profile" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new parent account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "format": "password", "minLength": 6 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "$ref": "#/components/schemas/User" },
+                    "session": { "type": "object", "nullable": true },
+                    "profile": { "$ref": "#/components/schemas/Profile" },
+                    "requiresEmailConfirmation": { "type": "boolean" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register-orphan-child": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new orphan child account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["identifier", "password", "confirmPassword"],
+                "properties": {
+                  "identifier": { "type": "string" },
+                  "password": { "type": "string", "format": "password" },
+                  "confirmPassword": { "type": "string", "format": "password" },
+                  "first_name": { "type": "string" },
+                  "last_name": { "type": "string" },
+                  "birth_month": { "type": "integer" },
+                  "birth_year": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Child account created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "user": { "type": "object" },
+                    "profile": { "$ref": "#/components/schemas/Profile" },
+                    "requiresEmailConfirmation": { "type": "boolean" },
+                    "isOrphan": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register-child": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new child account (parent creates)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password", "parent_id"],
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string", "format": "password" },
+                  "parent_id": { "type": "string", "format": "uuid" },
+                  "first_name": { "type": "string" },
+                  "last_name": { "type": "string" },
+                  "birth_month": { "type": "integer" },
+                  "birth_year": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Child account created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "$ref": "#/components/schemas/User" },
+                    "profile": { "$ref": "#/components/schemas/Profile" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh access token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["refresh_token"],
+                "properties": {
+                  "refresh_token": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token refreshed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": { "type": "string" },
+                    "refresh_token": { "type": "string" },
+                    "expires_in": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Get current authenticated user profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "User profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "$ref": "#/components/schemas/User" },
+                    "profile": { "$ref": "#/components/schemas/Profile" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/signout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Sign out current session",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Signed out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Request password reset email",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset email sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/resend-confirmation": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Resend email confirmation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmation email sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/resend-verification": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Resend verification email",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification email sent"
+          }
+        }
+      }
+    },
+    "/api/auth/profiles": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Get profiles (filtered by role/parent)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "role", "in": "query", "schema": { "type": "string" } },
+          { "name": "parent_id", "in": "query", "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of profiles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Profile" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/validate-approval-token": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Validate task approval token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token validated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "valid": { "type": "boolean" },
+                    "task": { "$ref": "#/components/schemas/Task" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/approve-with-token": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Approve task with token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "task": { "$ref": "#/components/schemas/Task" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/validate-review-token": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Validate review token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token validated"
+          }
+        }
+      }
+    },
+    "/api/auth/approve-request-with-token": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Approve request with token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request approved"
+          }
+        }
+      }
+    },
+    "/api/auth/confirm": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Email confirmation redirect",
+        "responses": {
+          "200": {
+            "description": "Email confirmed"
+          }
+        }
+      }
+    },
+    "/api/auth/reset-password": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Password reset redirect",
+        "responses": {
+          "200": {
+            "description": "Password reset page"
+          }
+        }
+      }
+    },
+    "/api/auth/debug/url-config": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Debug URL configuration",
+        "responses": {
+          "200": {
+            "description": "URL configuration"
+          }
+        }
+      }
+    },
+    "/api/auth/apple": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Sign in with Apple",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id_token"],
+                "properties": {
+                  "id_token": { "type": "string" },
+                  "user": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Apple sign-in successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "$ref": "#/components/schemas/User" },
+                    "session": { "type": "object" },
+                    "profile": { "$ref": "#/components/schemas/Profile" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/google": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Sign in with Google",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id_token"],
+                "properties": {
+                  "id_token": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Google sign-in successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "$ref": "#/components/schemas/User" },
+                    "session": { "type": "object" },
+                    "profile": { "$ref": "#/components/schemas/Profile" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profiles": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get profiles (filtered)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "role", "in": "query", "schema": { "type": "string" } },
+          { "name": "parent_id", "in": "query", "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of profiles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Profile" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profiles/{id}": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get profile by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Profile" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Profiles"],
+        "summary": "Update profile",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "first_name": { "type": "string" },
+                  "last_name": { "type": "string" },
+                  "birth_month": { "type": "integer" },
+                  "birth_year": { "type": "integer" },
+                  "avatar_url": { "type": "string" },
+                  "password": { "type": "string", "format": "password" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Profile" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profiles/{id}/bonus-points": {
+      "post": {
+        "tags": ["Profiles"],
+        "summary": "Grant bonus points to a child",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["points"],
+                "properties": {
+                  "points": { "type": "integer", "minimum": 1, "maximum": 1000 },
+                  "reason": { "type": "string" },
+                  "notify": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bonus points granted"
+          }
+        }
+      }
+    },
+    "/api/profiles/{id}/toggle-active": {
+      "put": {
+        "tags": ["Profiles"],
+        "summary": "Toggle profile active status",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile status toggled"
+          }
+        }
+      }
+    },
+    "/api/profiles/{id}/notification-preferences": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get notification preferences",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification preferences"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Profiles"],
+        "summary": "Update notification preferences",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email_notifications": { "type": "boolean" },
+                  "push_notifications": { "type": "boolean" },
+                  "task_reminders": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Preferences updated"
+          }
+        }
+      }
+    },
+    "/api/profiles/{id}/onboarding": {
+      "put": {
+        "tags": ["Profiles"],
+        "summary": "Update onboarding status",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "onboarding_completed": { "type": "boolean" },
+                  "onboarding_step": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Onboarding status updated"
+          }
+        }
+      }
+    },
+    "/api/profiles/{id}/approve": {
+      "put": {
+        "tags": ["Profiles"],
+        "summary": "Approve child profile",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile approved"
+          }
+        }
+      }
+    },
+    "/api/profiles/{id}/deny": {
+      "put": {
+        "tags": ["Profiles"],
+        "summary": "Deny child profile",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile denied"
+          }
+        }
+      }
+    },
+    "/api/profiles/{id}/link-parent": {
+      "post": {
+        "tags": ["Profiles"],
+        "summary": "Link parent to child profile",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["parent_id"],
+                "properties": {
+                  "parent_id": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Parent linked"
+          }
+        }
+      }
+    },
+    "/api/profiles/{id}/unlink-parent/{parentId}": {
+      "delete": {
+        "tags": ["Profiles"],
+        "summary": "Unlink parent from child profile",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Parent unlinked"
+          }
+        }
+      }
+    },
+    "/api/profiles/orphan-status/{childId}": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get orphan status for child",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orphan status"
+          }
+        }
+      }
+    },
+    "/api/profiles/linked-children/{parentId}": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get linked children for parent",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of linked children",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Profile" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profiles/help-request": {
+      "post": {
+        "tags": ["Profiles"],
+        "summary": "Submit help request",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["message"],
+                "properties": {
+                  "message": { "type": "string" },
+                  "category": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Help request submitted"
+          }
+        }
+      }
+    },
+    "/api/tasks": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Create a new task",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["child_id"],
+                "properties": {
+                  "child_id": { "type": "string", "format": "uuid" },
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "due_date": { "type": "string", "format": "date-time" },
+                  "reward_type": { "type": "string" },
+                  "reward_value": { "type": "number" },
+                  "requires_proof": { "type": "boolean" },
+                  "is_recurring": { "type": "boolean" },
+                  "recurrence_pattern": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Task created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Task" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "List tasks with optional filters",
+        "parameters": [
+          { "name": "parent_id", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "child_id", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tasks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Task" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{id}": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get task by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Task" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Tasks"],
+        "summary": "Update task",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "status": { "type": "string" },
+                  "due_date": { "type": "string", "format": "date-time" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tasks"],
+        "summary": "Delete task",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task deleted"
+          }
+        }
+      }
+    },
+    "/api/tasks/{id}/submit": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Submit task for approval",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "notes": { "type": "string" },
+                  "proof_urls": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted"
+          }
+        }
+      }
+    },
+    "/api/tasks/{id}/approve": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Approve a completed task",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task approved"
+          }
+        }
+      }
+    },
+    "/api/tasks/{id}/reject": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Reject a completed task",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task rejected"
+          }
+        }
+      }
+    },
+    "/api/tasks/{id}/rejections": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get task rejection history",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rejection history"
+          }
+        }
+      }
+    },
+    "/api/tasks/submissions": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get task submissions",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parent_id", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "child_id", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of submissions"
+          }
+        }
+      }
+    },
+    "/api/tasks/submissions/count": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get submission count",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Submission count"
+          }
+        }
+      }
+    },
+    "/api/tasks/submissions/{submissionId}/approve": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Approve a task submission",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "submissionId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Submission approved"
+          }
+        }
+      }
+    },
+    "/api/tasks/submissions/{submissionId}/reject": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Reject a task submission",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "submissionId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Submission rejected"
+          }
+        }
+      }
+    },
+    "/api/rewards": {
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Create a new reward",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["reward_type"],
+                "properties": {
+                  "reward_type": { "type": "string" },
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "value": { "type": "number" },
+                  "point_cost": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reward created"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Rewards"],
+        "summary": "List rewards",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parent_id", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "child_id", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of rewards"
+          }
+        }
+      }
+    },
+    "/api/rewards/redeem": {
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Redeem a reward",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["rewardId", "pointsCost"],
+                "properties": {
+                  "rewardId": { "type": "string", "format": "uuid" },
+                  "pointsCost": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reward redeemed"
+          }
+        }
+      }
+    },
+    "/api/rewards/{id}": {
+      "get": {
+        "tags": ["Rewards"],
+        "summary": "Get reward by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward details"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Rewards"],
+        "summary": "Update reward",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Rewards"],
+        "summary": "Delete reward",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward deleted"
+          }
+        }
+      }
+    },
+    "/api/rewards/{id}/request": {
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Request a reward",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward requested"
+          }
+        }
+      }
+    },
+    "/api/rewards/{id}/approve": {
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Approve reward request",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward approved"
+          }
+        }
+      }
+    },
+    "/api/rewards/{id}/reject": {
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Reject reward request",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward rejected"
+          }
+        }
+      }
+    },
+    "/api/rewards/{id}/grant": {
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Grant reward directly",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward granted"
+          }
+        }
+      }
+    },
+    "/api/rewards/history": {
+      "get": {
+        "tags": ["Rewards"],
+        "summary": "Get reward history",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Reward history"
+          }
+        }
+      }
+    },
+    "/api/rewards/redemptions": {
+      "get": {
+        "tags": ["Rewards"],
+        "summary": "Get reward redemptions",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Redemption list"
+          }
+        }
+      }
+    },
+    "/api/rewards/redemptions/{id}/fulfill": {
+      "put": {
+        "tags": ["Rewards"],
+        "summary": "Fulfill reward redemption",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Redemption fulfilled"
+          }
+        }
+      }
+    },
+    "/api/rewards/{id}/restore": {
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Restore deleted reward",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward restored"
+          }
+        }
+      }
+    },
+    "/api/rewards/{id}/status": {
+      "put": {
+        "tags": ["Rewards"],
+        "summary": "Update reward status",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status updated"
+          }
+        }
+      }
+    },
+    "/api/rewards/request-new": {
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Request new reward",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "point_cost": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reward request created"
+          }
+        }
+      }
+    },
+    "/api/rewards/{rewardId}/fulfill": {
+      "put": {
+        "tags": ["Rewards"],
+        "summary": "Fulfill reward",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "rewardId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward fulfilled"
+          }
+        }
+      }
+    },
+    "/api/screen-time/{childId}/rules": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get screen time rules",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of rules"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Create screen time rule",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "daily_limit_minutes": { "type": "integer" },
+                  "is_active": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Rule created"
+          }
+        }
+      }
+    },
+    "/api/screen-time/{childId}/rules/{ruleId}": {
+      "put": {
+        "tags": ["Screen Time"],
+        "summary": "Update screen time rule",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "ruleId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rule updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Screen Time"],
+        "summary": "Delete screen time rule",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "ruleId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rule deleted"
+          }
+        }
+      }
+    },
+    "/api/screen-time/{childId}/schedules": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get screen time schedules",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of schedules"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Create screen time schedule",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "201": {
+            "description": "Schedule created"
+          }
+        }
+      }
+    },
+    "/api/screen-time/{childId}/schedules/{scheduleId}": {
+      "put": {
+        "tags": ["Screen Time"],
+        "summary": "Update screen time schedule",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "scheduleId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Screen Time"],
+        "summary": "Delete screen time schedule",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "scheduleId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule deleted"
+          }
+        }
+      }
+    },
+    "/api/screen-time/extension-request": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Request screen time extension",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "child_id": { "type": "string", "format": "uuid" },
+                  "minutes": { "type": "integer" },
+                  "reason": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Extension requested"
+          }
+        }
+      }
+    },
+    "/api/screen-time/{childId}/extensions/pending": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get pending extensions",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pending extensions"
+          }
+        }
+      }
+    },
+    "/api/screen-time/extensions/{extensionId}/approve": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Approve extension request",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "extensionId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Extension approved"
+          }
+        }
+      }
+    },
+    "/api/screen-time/extensions/{extensionId}/reject": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Reject extension request",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "extensionId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Extension rejected"
+          }
+        }
+      }
+    },
+    "/api/screen-time/{childId}/stats": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get screen time statistics",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Screen time statistics"
+          }
+        }
+      }
+    },
+    "/api/screen-time/{childId}/history": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get screen time history",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Screen time history"
+          }
+        }
+      }
+    },
+    "/api/screen-time/limits": {
+      "put": {
+        "tags": ["Screen Time"],
+        "summary": "Update screen time limits",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "child_id": { "type": "string", "format": "uuid" },
+                  "daily_limit_minutes": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Limits updated"
+          }
+        }
+      }
+    },
+    "/api/screen-time/limits/{childId}": {
+      "delete": {
+        "tags": ["Screen Time"],
+        "summary": "Delete screen time limits",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Limits deleted"
+          }
+        }
+      }
+    },
+    "/api/screen-time/{childId}/balance": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get screen time balance",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance in minutes"
+          }
+        }
+      }
+    },
+    "/api/screen-time/{childId}/redeem": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Redeem points for screen time",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "points": { "type": "integer" },
+                  "minutes": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Points redeemed"
+          }
+        }
+      }
+    },
+    "/api/screen-time/usage": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get current screen time usage",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "child_id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Today's usage"
+          }
+        }
+      }
+    },
+    "/api/screen-time/request": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Request screen time",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "child_id": { "type": "string", "format": "uuid" },
+                  "minutes": { "type": "integer" },
+                  "reason": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Request created"
+          }
+        }
+      }
+    },
+    "/api/screen-time/requests/pending": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get pending screen time requests",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Pending requests"
+          }
+        }
+      }
+    },
+    "/api/screen-time/request/{requestId}/respond": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Respond to screen time request",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "requestId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "approved": { "type": "boolean" },
+                  "reason": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response recorded"
+          }
+        }
+      }
+    },
+    "/api/screen-time/requests/history": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get screen time request history",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Request history"
+          }
+        }
+      }
+    },
+    "/api/screen-time/log": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Log screen time usage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "child_id": { "type": "string", "format": "uuid" },
+                  "app_name": { "type": "string" },
+                  "duration_minutes": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usage logged"
+          }
+        }
+      }
+    },
+    "/api/screen-time/logs": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get screen time logs",
+        "parameters": [
+          { "name": "child_id", "in": "query", "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Screen time logs"
+          }
+        }
+      }
+    },
+    "/api/screen-time-sessions/balance/{childId}": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get screen time session balance",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session balance"
+          }
+        }
+      }
+    },
+    "/api/screen-time-sessions/session/start": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Start screen time session",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "child_id": { "type": "string", "format": "uuid" },
+                  "device_id": { "type": "string" },
+                  "minutes": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Session started"
+          }
+        }
+      }
+    },
+    "/api/screen-time-sessions/session/end": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "End screen time session",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "session_id": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session ended"
+          }
+        }
+      }
+    },
+    "/api/screen-time-sessions/active-session": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get active screen time session",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Active session"
+          }
+        }
+      }
+    },
+    "/api/screen-time-sessions/rules/{childId}": {
+      "get": {
+        "tags": ["Screen Time"],
+        "summary": "Get screen time session rules",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session rules"
+          }
+        }
+      }
+    },
+    "/api/screen-time-sessions/session/extend": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Extend screen time session",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "session_id": { "type": "string", "format": "uuid" },
+                  "minutes": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session extended"
+          }
+        }
+      }
+    },
+    "/api/screen-time-sessions/log-usage": {
+      "post": {
+        "tags": ["Screen Time"],
+        "summary": "Log device usage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_id": { "type": "string" },
+                  "child_id": { "type": "string", "format": "uuid" },
+                  "duration_minutes": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usage logged"
+          }
+        }
+      }
+    },
+    "/api/badges": {
+      "get": {
+        "tags": ["Achievements & Badges"],
+        "summary": "Get all badges",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of badges"
+          }
+        }
+      }
+    },
+    "/api/badges/reset": {
+      "put": {
+        "tags": ["Achievements & Badges"],
+        "summary": "Reset badges",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Badges reset"
+          }
+        }
+      }
+    },
+    "/api/badges/sync": {
+      "put": {
+        "tags": ["Achievements & Badges"],
+        "summary": "Sync badges",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Badges synced"
+          }
+        }
+      }
+    },
+    "/api/badges/increment": {
+      "post": {
+        "tags": ["Achievements & Badges"],
+        "summary": "Increment badge count",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "badge_id": { "type": "string" },
+                  "count": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Badge incremented"
+          }
+        }
+      }
+    },
+    "/api/badges/set": {
+      "put": {
+        "tags": ["Achievements & Badges"],
+        "summary": "Set badge value",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "badge_id": { "type": "string" },
+                  "value": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Badge value set"
+          }
+        }
+      }
+    },
+    "/api/achievements": {
+      "get": {
+        "tags": ["Achievements & Badges"],
+        "summary": "Get all achievements",
+        "responses": {
+          "200": {
+            "description": "List of achievements"
+          }
+        }
+      }
+    },
+    "/api/achievements/user/{userId}": {
+      "get": {
+        "tags": ["Achievements & Badges"],
+        "summary": "Get user's achievements",
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's achievements"
+          }
+        }
+      }
+    },
+    "/api/achievements/streak/{userId}": {
+      "get": {
+        "tags": ["Achievements & Badges"],
+        "summary": "Get user's streak",
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's streak data"
+          }
+        }
+      }
+    },
+    "/api/analytics/overview": {
+      "get": {
+        "tags": ["Analytics & Reports"],
+        "summary": "Get analytics overview",
+        "parameters": [
+          { "name": "family_id", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "period", "in": "query", "schema": { "type": "string", "enum": ["24h", "7d", "30d", "90d"] } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Analytics overview"
+          }
+        }
+      }
+    },
+    "/api/analytics/trends": {
+      "get": {
+        "tags": ["Analytics & Reports"],
+        "summary": "Get analytics trends",
+        "parameters": [
+          { "name": "family_id", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "metric", "in": "query", "schema": { "type": "string" } },
+          { "name": "period", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trend data"
+          }
+        }
+      }
+    },
+    "/api/analytics/children": {
+      "get": {
+        "tags": ["Analytics & Reports"],
+        "summary": "Get children analytics",
+        "parameters": [
+          { "name": "family_id", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Children analytics"
+          }
+        }
+      }
+    },
+    "/api/analytics/categories": {
+      "get": {
+        "tags": ["Analytics & Reports"],
+        "summary": "Get category analytics",
+        "responses": {
+          "200": {
+            "description": "Category analytics"
+          }
+        }
+      }
+    },
+    "/api/analytics/insights": {
+      "get": {
+        "tags": ["Analytics & Reports"],
+        "summary": "Get analytics insights",
+        "responses": {
+          "200": {
+            "description": "Insights"
+          }
+        }
+      }
+    },
+    "/api/families/{parentId}/app-groups": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get app groups",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of app groups"
+          }
+        }
+      },
+      "post": {
+        "tags": ["App Management"],
+        "summary": "Create app group",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "apps": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "App group created"
+          }
+        }
+      }
+    },
+    "/api/families/{parentId}/app-groups/{groupId}": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get app group",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "groupId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "App group details"
+          }
+        }
+      },
+      "put": {
+        "tags": ["App Management"],
+        "summary": "Update app group",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "groupId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "App group updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["App Management"],
+        "summary": "Delete app group",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "groupId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "App group deleted"
+          }
+        }
+      }
+    },
+    "/api/families/{parentId}/app-groups/{groupId}/toggle": {
+      "post": {
+        "tags": ["App Management"],
+        "summary": "Toggle app group status",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "groupId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group toggled"
+          }
+        }
+      }
+    },
+    "/api/families/{parentId}/app-management-history": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get app management history",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Management history"
+          }
+        }
+      },
+      "post": {
+        "tags": ["App Management"],
+        "summary": "Log app management action",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "201": {
+            "description": "Action logged"
+          }
+        }
+      }
+    },
+    "/api/apps/popular": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get popular apps catalog",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "category", "in": "query", "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of popular apps"
+          }
+        }
+      }
+    },
+    "/api/apps/categories": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get app categories",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "App categories"
+          }
+        }
+      }
+    },
+    "/api/apps/recommendations": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get app recommendations",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Recommended apps"
+          }
+        }
+      }
+    },
+    "/api/apps/search": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Search apps",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results"
+          }
+        }
+      }
+    },
+    "/api/apps/category-metadata": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get category metadata",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Category metadata"
+          }
+        }
+      }
+    },
+    "/api/presets": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get app presets",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of presets"
+          }
+        }
+      }
+    },
+    "/api/presets/recommended/{childAge}": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get recommended presets by age",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childAge", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recommended presets"
+          }
+        }
+      }
+    },
+    "/api/presets/family/custom": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get custom family presets",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Custom presets"
+          }
+        }
+      }
+    },
+    "/api/presets/{id}": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get preset by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Preset details"
+          }
+        }
+      }
+    },
+    "/api/presets/custom": {
+      "post": {
+        "tags": ["App Management"],
+        "summary": "Create custom preset",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "settings": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Preset created"
+          }
+        }
+      }
+    },
+    "/api/presets/custom/{id}": {
+      "put": {
+        "tags": ["App Management"],
+        "summary": "Update custom preset",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Preset updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["App Management"],
+        "summary": "Delete custom preset",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Preset deleted"
+          }
+        }
+      }
+    },
+    "/api/presets/{presetId}/apply": {
+      "post": {
+        "tags": ["App Management"],
+        "summary": "Apply preset",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "presetId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "child_id": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Preset applied"
+          }
+        }
+      }
+    },
+    "/api/profile/{childId}/installed-apps": {
+      "get": {
+        "tags": ["App Management"],
+        "summary": "Get installed apps",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Installed apps"
+          }
+        }
+      },
+      "post": {
+        "tags": ["App Management"],
+        "summary": "Register installed apps",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "apps": { "type": "array", "items": { "type": "object" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Apps registered"
+          }
+        }
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Get notifications",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "user_id", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } },
+          { "name": "offset", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of notifications"
+          }
+        }
+      }
+    },
+    "/api/notifications/count": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Get unread notification count",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Unread count"
+          }
+        }
+      }
+    },
+    "/api/notifications/history": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Get notification history",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Notification history"
+          }
+        }
+      }
+    },
+    "/api/notifications/register-device": {
+      "post": {
+        "tags": ["Notifications"],
+        "summary": "Register device for notifications",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_token": { "type": "string" },
+                  "platform": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Device registered"
+          }
+        }
+      }
+    },
+    "/api/notifications/{id}/read": {
+      "put": {
+        "tags": ["Notifications"],
+        "summary": "Mark notification as read",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification marked as read"
+          }
+        }
+      }
+    },
+    "/api/notifications/mark-all-read": {
+      "put": {
+        "tags": ["Notifications"],
+        "summary": "Mark all notifications as read",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "All notifications marked as read"
+          }
+        }
+      }
+    },
+    "/api/notifications/{id}": {
+      "delete": {
+        "tags": ["Notifications"],
+        "summary": "Delete notification",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification deleted"
+          }
+        }
+      }
+    },
+    "/api/push-notifications/subscribe": {
+      "post": {
+        "tags": ["Notifications"],
+        "summary": "Subscribe to push notifications",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "subscription": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Subscribed"
+          }
+        }
+      }
+    },
+    "/api/push-notifications/unsubscribe": {
+      "delete": {
+        "tags": ["Notifications"],
+        "summary": "Unsubscribe from push notifications",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Unsubscribed"
+          }
+        }
+      }
+    },
+    "/api/push-notifications/vapid-public-key": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Get VAPID public key",
+        "responses": {
+          "200": {
+            "description": "VAPID key"
+          }
+        }
+      }
+    },
+    "/api/push-notifications/test": {
+      "post": {
+        "tags": ["Notifications"],
+        "summary": "Send test push notification",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Test notification sent"
+          }
+        }
+      }
+    },
+    "/api/push-notifications/register-ios": {
+      "post": {
+        "tags": ["Notifications"],
+        "summary": "Register iOS device for push",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_token": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "iOS device registered"
+          }
+        }
+      }
+    },
+    "/api/push-notifications/unregister-ios": {
+      "delete": {
+        "tags": ["Notifications"],
+        "summary": "Unregister iOS device",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "iOS device unregistered"
+          }
+        }
+      }
+    },
+    "/api/devices/register-ios": {
+      "post": {
+        "tags": ["Monitoring & Devices"],
+        "summary": "Register an iOS device",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_name": { "type": "string" },
+                  "device_identifier": { "type": "string" },
+                  "ios_version": { "type": "string" },
+                  "push_token": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Device registered"
+          }
+        }
+      }
+    },
+    "/api/devices": {
+      "get": {
+        "tags": ["Monitoring & Devices"],
+        "summary": "Get devices",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of devices"
+          }
+        }
+      }
+    },
+    "/api/education": {
+      "get": {
+        "tags": ["Education"],
+        "summary": "Get educational content",
+        "responses": {
+          "200": {
+            "description": "List of content"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Education"],
+        "summary": "Create educational content",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "type": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Content created"
+          }
+        }
+      }
+    },
+    "/api/education/{id}": {
+      "get": {
+        "tags": ["Education"],
+        "summary": "Get educational content by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Content details"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Education"],
+        "summary": "Update educational content",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Content updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Education"],
+        "summary": "Delete educational content",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Content deleted"
+          }
+        }
+      }
+    },
+    "/api/education/quiz-attempts": {
+      "post": {
+        "tags": ["Education"],
+        "summary": "Submit quiz attempt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quiz_id": { "type": "string", "format": "uuid" },
+                  "answers": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Quiz attempt recorded"
+          }
+        }
+      }
+    },
+    "/api/education/completions": {
+      "post": {
+        "tags": ["Education"],
+        "summary": "Mark content as completed",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content_id": { "type": "string", "format": "uuid" },
+                  "user_id": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Completion recorded"
+          }
+        }
+      }
+    },
+    "/api/redeemable-items": {
+      "get": {
+        "tags": ["Rewards"],
+        "summary": "Get redeemable items",
+        "responses": {
+          "200": {
+            "description": "List of redeemable items"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Create redeemable item",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "point_cost": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item created"
+          }
+        }
+      }
+    },
+    "/api/redeemable-items/{itemId}": {
+      "get": {
+        "tags": ["Rewards"],
+        "summary": "Get redeemable item",
+        "parameters": [
+          { "name": "itemId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item details"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Rewards"],
+        "summary": "Update redeemable item",
+        "parameters": [
+          { "name": "itemId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Rewards"],
+        "summary": "Delete redeemable item",
+        "parameters": [
+          { "name": "itemId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item deleted"
+          }
+        }
+      }
+    },
+    "/api/redeemable-items/{itemId}/redeem": {
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Redeem item",
+        "parameters": [
+          { "name": "itemId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item redeemed"
+          }
+        }
+      }
+    },
+    "/api/reward-requests": {
+      "get": {
+        "tags": ["Rewards"],
+        "summary": "Get reward requests",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of reward requests"
+          }
+        }
+      }
+    },
+    "/api/reward-requests/{requestId}/approve": {
+      "put": {
+        "tags": ["Rewards"],
+        "summary": "Approve reward request",
+        "parameters": [
+          { "name": "requestId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request approved"
+          }
+        }
+      }
+    },
+    "/api/reward-requests/{requestId}/reject": {
+      "put": {
+        "tags": ["Rewards"],
+        "summary": "Reject reward request",
+        "parameters": [
+          { "name": "requestId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request rejected"
+          }
+        }
+      }
+    },
+    "/api/point-redemptions": {
+      "get": {
+        "tags": ["Rewards"],
+        "summary": "Get point redemptions",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of redemptions"
+          }
+        }
+      }
+    },
+    "/api/point-redemptions/{redemptionId}/fulfill": {
+      "put": {
+        "tags": ["Rewards"],
+        "summary": "Fulfill redemption",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "redemptionId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Redemption fulfilled"
+          }
+        }
+      }
+    },
+    "/api/parent-settings/{parentId}": {
+      "get": {
+        "tags": ["Settings"],
+        "summary": "Get parent settings",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Parent settings"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Settings"],
+        "summary": "Update parent settings",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "parentId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Settings updated"
+          }
+        }
+      }
+    },
+    "/api/parent-settings": {
+      "post": {
+        "tags": ["Settings"],
+        "summary": "Create parent settings",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "parent_id": { "type": "string", "format": "uuid" },
+                  "settings": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Settings created"
+          }
+        }
+      }
+    },
+    "/api/parent-settings/calculate-rewards": {
+      "post": {
+        "tags": ["Settings"],
+        "summary": "Calculate reward values",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "task_count": { "type": "integer" },
+                  "difficulty": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Calculated rewards"
+          }
+        }
+      }
+    },
+    "/api/recurring-tasks/process": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Process recurring tasks",
+        "responses": {
+          "200": {
+            "description": "Tasks processed"
+          }
+        }
+      }
+    },
+    "/api/recurring-tasks/status": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get recurring task processor status",
+        "responses": {
+          "200": {
+            "description": "Processor status"
+          }
+        }
+      }
+    },
+    "/api/recurring-tasks/validate-pattern": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Validate recurrence pattern",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pattern": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pattern validation result"
+          }
+        }
+      }
+    },
+    "/api/recurring-tasks/next-occurrence": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Calculate next occurrence",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pattern": { "type": "object" },
+                  "from_date": { "type": "string", "format": "date-time" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Next occurrence date"
+          }
+        }
+      }
+    },
+    "/api/task-reminders/process": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Process task reminders",
+        "responses": {
+          "200": {
+            "description": "Reminders processed"
+          }
+        }
+      }
+    },
+    "/api/task-reminders/status": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get reminder processor status",
+        "responses": {
+          "200": {
+            "description": "Processor status"
+          }
+        }
+      }
+    },
+    "/api/task-templates": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get task templates",
+        "responses": {
+          "200": {
+            "description": "List of templates"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Create task template",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "template": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Template created"
+          }
+        }
+      }
+    },
+    "/api/task-templates/{id}": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get task template",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template details"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Tasks"],
+        "summary": "Update task template",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tasks"],
+        "summary": "Delete task template",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template deleted"
+          }
+        }
+      }
+    },
+    "/api/task-templates/{id}/use": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Use template to create task",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "child_id": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Task created from template"
+          }
+        }
+      }
+    },
+    "/api/task-templates/bulk-assign": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Bulk assign templates",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "template_ids": { "type": "array", "items": { "type": "string", "format": "uuid" } },
+                  "child_ids": { "type": "array", "items": { "type": "string", "format": "uuid" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Templates assigned"
+          }
+        }
+      }
+    },
+    "/api/task-templates/categories/list": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get template categories",
+        "responses": {
+          "200": {
+            "description": "List of categories"
+          }
+        }
+      }
+    },
+    "/api/weekly-summary/process": {
+      "post": {
+        "tags": ["Analytics & Reports"],
+        "summary": "Process weekly summary",
+        "responses": {
+          "200": {
+            "description": "Summary processed"
+          }
+        }
+      }
+    },
+    "/api/weekly-summary/status": {
+      "get": {
+        "tags": ["Analytics & Reports"],
+        "summary": "Get weekly summary status",
+        "responses": {
+          "200": {
+            "description": "Processor status"
+          }
+        }
+      }
+    },
+    "/api/reports/parent": {
+      "get": {
+        "tags": ["Analytics & Reports"],
+        "summary": "Get parent report",
+        "parameters": [
+          { "name": "parent_id", "in": "query", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Parent report"
+          }
+        }
+      }
+    },
+    "/api/proofs": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get task proofs",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of proofs"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Submit proof",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "task_id": { "type": "string", "format": "uuid" },
+                  "proof_url": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Proof submitted"
+          }
+        }
+      }
+    },
+    "/api/proofs/{id}": {
+      "put": {
+        "tags": ["Tasks"],
+        "summary": "Update proof",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Proof updated"
+          }
+        }
+      }
+    },
+    "/api/proofs/{id}/signed-urls": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get signed URLs for proof",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Signed URLs"
+          }
+        }
+      }
+    },
+    "/api/export/tasks": {
+      "post": {
+        "tags": ["Export"],
+        "summary": "Export tasks to CSV",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "parent_id": { "type": "string", "format": "uuid" },
+                  "start_date": { "type": "string", "format": "date" },
+                  "end_date": { "type": "string", "format": "date" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CSV export"
+          }
+        }
+      }
+    },
+    "/api/export/rewards": {
+      "post": {
+        "tags": ["Export"],
+        "summary": "Export rewards to CSV",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "CSV export"
+          }
+        }
+      }
+    },
+    "/api/export/achievements": {
+      "post": {
+        "tags": ["Export"],
+        "summary": "Export achievements to CSV",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "CSV export"
+          }
+        }
+      }
+    },
+    "/api/export/summary": {
+      "post": {
+        "tags": ["Export"],
+        "summary": "Export summary report",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Summary export"
+          }
+        }
+      }
+    },
+    "/api/export/cleanup": {
+      "post": {
+        "tags": ["Export"],
+        "summary": "Cleanup old exports",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Cleanup completed"
+          }
+        }
+      }
+    },
+    "/api/upload/avatar/{userId}": {
+      "post": {
+        "tags": ["Upload"],
+        "summary": "Upload user avatar",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Avatar uploaded"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Upload"],
+        "summary": "Delete user avatar",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Avatar deleted"
+          }
+        }
+      }
+    },
+    "/api/upload/proof/{taskId}/{childId}": {
+      "post": {
+        "tags": ["Upload"],
+        "summary": "Upload task proof",
+        "parameters": [
+          { "name": "taskId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "proof": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Proof uploaded"
+          }
+        }
+      }
+    },
+    "/api/upload/proof-multiple/{taskId}/{childId}": {
+      "post": {
+        "tags": ["Upload"],
+        "summary": "Upload multiple task proofs",
+        "parameters": [
+          { "name": "taskId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "childId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "proofs": { "type": "array", "items": { "type": "string", "format": "binary" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Proofs uploaded"
+          }
+        }
+      }
+    },
+    "/api/upload/proof": {
+      "delete": {
+        "tags": ["Upload"],
+        "summary": "Delete proof",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "proof_url": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Proof deleted"
+          }
+        }
+      }
+    },
+    "/api/activity": {
+      "post": {
+        "tags": ["Admin/Debug"],
+        "summary": "Log activity",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": { "type": "string", "format": "uuid" },
+                  "action": { "type": "string" },
+                  "metadata": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Activity logged"
+          }
+        }
+      }
+    },
+    "/api/invitations/create": {
+      "post": {
+        "tags": ["Invitations"],
+        "summary": "Create parent-child linking invitation",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["invitation_type", "child_id"],
+                "properties": {
+                  "invitation_type": { "type": "string" },
+                  "child_id": { "type": "string", "format": "uuid" },
+                  "parent_id": { "type": "string", "format": "uuid" },
+                  "contact_info": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation created"
+          }
+        }
+      }
+    },
+    "/api/invitations/accept": {
+      "post": {
+        "tags": ["Invitations"],
+        "summary": "Accept an invitation",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["invitation_code"],
+                "properties": {
+                  "invitation_code": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation accepted"
+          }
+        }
+      }
+    },
+    "/api/invitations/child-code": {
+      "get": {
+        "tags": ["Invitations"],
+        "summary": "Get child invitation code",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Child invitation code"
+          }
+        }
+      }
+    },
+    "/api/invitations/register": {
+      "post": {
+        "tags": ["Invitations"],
+        "summary": "Register invitation",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "Invitation registered"
+          }
+        }
+      }
+    },
+    "/api/invitations/validate": {
+      "post": {
+        "tags": ["Invitations"],
+        "summary": "Validate invitation code",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validation result"
+          }
+        }
+      }
+    },
+    "/api/invitations/pending": {
+      "get": {
+        "tags": ["Invitations"],
+        "summary": "Get pending invitations",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Pending invitations"
+          }
+        }
+      }
+    },
+    "/api/invitations/child-invite/{inviteId}/accept": {
+      "post": {
+        "tags": ["Invitations"],
+        "summary": "Accept child invite",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "inviteId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invite accepted"
+          }
+        }
+      }
+    },
+    "/api/invitations/child-invite/{inviteId}/reject": {
+      "post": {
+        "tags": ["Invitations"],
+        "summary": "Reject child invite",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "inviteId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invite rejected"
+          }
+        }
+      }
+    },
+    "/api/invitations/search": {
+      "get": {
+        "tags": ["Invitations"],
+        "summary": "Search invitations",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "query", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results"
+          }
+        }
+      }
+    },
+    "/api/invitations/{inviteId}": {
+      "get": {
+        "tags": ["Invitations"],
+        "summary": "Get invitation by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "inviteId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invitation details"
+          }
+        }
+      }
+    },
+    "/api/feedback": {
+      "post": {
+        "tags": ["Admin/Debug"],
+        "summary": "Submit feedback",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "string" },
+                  "category": { "type": "string" },
+                  "user_id": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Feedback submitted"
+          }
+        }
+      }
+    },
+    "/api/logs/errors": {
+      "get": {
+        "tags": ["Admin/Debug"],
+        "summary": "Get error logs",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Error logs"
+          }
+        }
+      }
+    },
+    "/api/logs/errors/{id}": {
+      "get": {
+        "tags": ["Admin/Debug"],
+        "summary": "Get error log by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Error log details"
+          }
+        }
+      }
+    },
+    "/api/logs/stats": {
+      "get": {
+        "tags": ["Admin/Debug"],
+        "summary": "Get log statistics",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Log statistics"
+          }
+        }
+      }
+    },
+    "/api/version": {
+      "get": {
+        "tags": ["Admin/Debug"],
+        "summary": "Get API version and deployment info",
+        "responses": {
+          "200": {
+            "description": "Version information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": { "type": "string" },
+                    "deployedAt": { "type": "string" },
+                    "commit": { "type": "string" },
+                    "environment": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "tags": ["Admin/Debug"],
+        "summary": "Health check endpoint",
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
