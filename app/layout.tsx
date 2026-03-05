@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://screentimehero.com"),
   title: "Screen Time Hero - End the Screen Time Fights Forever",
   description: "Turn screen time battles into motivation. Parents assign tasks, kids complete with photo proof, earn points, and redeem for screen time. No negotiations needed.",
   keywords: ["screen time", "parental controls", "chore app", "kids tasks", "family app", "screen time management"],
+  icons: {
+    icon: "/favicon.png",
+  },
   openGraph: {
     title: "Screen Time Hero - End the Screen Time Fights Forever",
     description: "Turn screen time battles into motivation. Kids earn screen time by completing tasks with photo proof.",
@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
+        className={`${inter.variable} antialiased font-sans`}
       >
         {children}
       </body>

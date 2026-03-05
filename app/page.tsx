@@ -1,21 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { 
-  Shield, 
-  Camera, 
-  Clock, 
-  Gift, 
-  CheckCircle, 
-  Star, 
+import {
+  Camera,
+  Clock,
+  Gift,
+  CheckCircle,
+  Star,
   Zap,
   Smartphone,
   Lock,
+  Shield,
   ChevronDown,
   Menu,
   X
 } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -47,7 +49,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <Shield className="w-8 h-8 text-[#3A7BFA]" />
+              <Image src="/logo.svg" alt="Screen Time Hero" width={32} height={32} />
               <span className="text-xl font-bold text-[#1C1F26]">Screen Time Hero</span>
             </div>
             
@@ -595,7 +597,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <Shield className="w-8 h-8 text-[#3A7BFA]" />
+                <Image src="/logo.svg" alt="Screen Time Hero" width={32} height={32} />
                 <span className="text-xl font-bold">Screen Time Hero</span>
               </div>
               <p className="text-gray-400 text-sm">
@@ -613,17 +615,15 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                <li><Link href="/download" className="hover:text-white transition-colors">Download</Link></li>
+                <li><a href="mailto:support@screentimehero.com" className="hover:text-white transition-colors">Contact</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">COPPA Compliance</a></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
