@@ -1,0 +1,19 @@
+language: en-US
+reviews:
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+  path_filters:
+    - "!**/*.md"
+    - "!**/*.lock"
+    - "!**/package-lock.json"
+    - "!**/yarn.lock"
+    - "!**/*.generated.*"
+    - "!**/migrations/**"
+  tools:
+    eslint:
+      enabled: true
+chat:
+  auto_reply: true
