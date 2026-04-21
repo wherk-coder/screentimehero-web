@@ -202,7 +202,7 @@ export default function Home() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg mb-1">Photo Proof Required</h4>
-                      <p className="text-gray-600">Kids must submit photo evidence. No more "I did it" without verification.</p>
+                      <p className="text-gray-600">Kids must submit photo evidence. No more &quot;I did it&quot; without verification.</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-4">
@@ -405,7 +405,7 @@ export default function Home() {
                     <Star key={i} className="w-5 h-5 text-[#FFC300] fill-[#FFC300]" />
                   ))}
                 </div>
-                <p className="text-gray-700 mb-4 italic">"{testimonial.quote}"</p>
+                <p className="text-gray-700 mb-4 italic">&quot;{testimonial.quote}&quot;</p>
                 <div>
                   <p className="font-semibold text-[#1C1F26]">{testimonial.author}</p>
                   <p className="text-sm text-gray-500">{testimonial.detail}</p>
@@ -574,7 +574,7 @@ export default function Home() {
           >
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to End the Screen Time Fights?</h2>
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of families who've transformed screen time from a battle into motivation.
+              Join thousands of families who&apos;ve transformed screen time from a battle into motivation.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <motion.a 

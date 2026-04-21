@@ -50,7 +50,7 @@ export default function DownloadPage() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              You're Moments Away From Solving Families' Biggest Pain Point
+              You&apos;re Moments Away From Solving Families&apos; Biggest Pain Point
             </h1>
 
             <p className="text-xl text-blue-100 mb-8">
@@ -133,7 +133,7 @@ export default function DownloadPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-gray-500">Good morning,</p>
-                      <p className="font-bold text-sm">Emma's Tasks</p>
+                      <p className="font-bold text-sm">Emma&apos;s Tasks</p>
                     </div>
                     <div className="w-8 h-8 bg-[#FFC300] rounded-full flex items-center justify-center text-sm">
                       👧
@@ -149,7 +149,7 @@ export default function DownloadPage() {
 
                   {/* Tasks */}
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 mb-2">Today's Tasks</p>
+                    <p className="text-xs font-semibold text-gray-500 mb-2">Today&apos;s Tasks</p>
                     {[
                       { task: "Clean bedroom", points: 15, status: "done" },
                       { task: "Math homework", points: 20, status: "pending" },
