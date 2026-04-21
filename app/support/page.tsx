@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: "Get help with Screen Time Hero setup, subscriptions, Family Sharing, account access, and data requests.",
 };
 
+const SUPPORT_EMAIL = "support@screentimehero.com";
+const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}`;
+
 const faqs = [
   {
     id: "how-it-works",
@@ -25,13 +28,13 @@ const faqs = [
     id: "restore-subscription",
     question: "Can I restore my subscription?",
     answer:
-      "Yes. Open the app, go to Settings, and use Restore Purchases. If that does not work, email support@screentimehero.com and include the Apple ID used for purchase.",
+      `Yes. Open the app, go to Settings, and use Restore Purchases. If that does not work, email ${SUPPORT_EMAIL} and include the Apple ID used for purchase.`,
   },
   {
     id: "delete-data",
     question: "How do I delete my family's data?",
     answer:
-      "Email support@screentimehero.com from the parent account email and request account deletion. We will process the request and remove associated family data.",
+      `Email ${SUPPORT_EMAIL} from the parent account email and request account deletion. We will process the request and remove associated family data.`,
   },
 ];
 
@@ -63,10 +66,10 @@ export default function SupportPage() {
               For help with account access, billing, Family Sharing setup, or app questions, email us anytime.
             </p>
             <a
-              href="mailto:support@screentimehero.com"
+              href={SUPPORT_MAILTO}
               className="inline-flex items-center rounded-xl bg-[#3A7BFA] px-5 py-3 font-semibold text-white hover:bg-blue-600 transition-colors"
             >
-              support@screentimehero.com
+              {SUPPORT_EMAIL}
             </a>
             <p className="text-sm text-gray-500 mt-4">
               Please include your device type, iOS version, and a short description of the issue so we can help faster.
@@ -105,7 +108,7 @@ export default function SupportPage() {
           <h2 className="text-2xl font-bold text-[#1C1F26] mb-3">Account and Billing Requests</h2>
           <div className="space-y-3 text-gray-600 leading-relaxed">
             <p>
-              For subscription questions, restoration issues, refunds, or account deletion requests, email <a href="mailto:support@screentimehero.com" className="text-[#3A7BFA] hover:underline">support@screentimehero.com</a> from your parent account email.
+              For subscription questions, restoration issues, refunds, or account deletion requests, email <a href={SUPPORT_MAILTO} className="text-[#3A7BFA] hover:underline">{SUPPORT_EMAIL}</a> from your parent account email.
             </p>
             <p>
               We may ask follow-up questions to verify account ownership before making account-level changes.
