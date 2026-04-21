@@ -61,10 +61,7 @@ export default function Home() {
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
-              <button className="px-4 py-2 text-[#3A7BFA] font-medium hover:bg-blue-50 rounded-lg transition-colors">
-                Sign In
-              </button>
-              <a 
+              <a
                 href="/download"
                 className="px-4 py-2 bg-[#3A7BFA] text-white font-medium rounded-lg hover:bg-blue-600 transition-colors"
               >
@@ -92,8 +89,7 @@ export default function Home() {
               <button onClick={() => scrollToSection("features")} className="block w-full text-left py-2 text-gray-600">Features</button>
               <button onClick={() => scrollToSection("pricing")} className="block w-full text-left py-2 text-gray-600">Pricing</button>
               <button onClick={() => scrollToSection("faq")} className="block w-full text-left py-2 text-gray-600">FAQ</button>
-              <div className="pt-3 border-t border-gray-100 space-y-2">
-                <button className="w-full py-2 text-[#3A7BFA] font-medium">Sign In</button>
+              <div className="pt-3 border-t border-gray-100">
                 <a href="/download" className="block w-full py-2 bg-[#3A7BFA] text-white font-medium rounded-lg text-center">Start Free Trial</a>
               </div>
             </div>
