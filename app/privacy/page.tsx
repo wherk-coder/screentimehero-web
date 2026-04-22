@@ -3,8 +3,11 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { SiteFooter } from "@/app/_components/SiteFooter";
 
-const PRIVACY_POLICY_EFFECTIVE_DATE = "April 22, 2026";
 const PRIVACY_POLICY_EFFECTIVE_DATE_ISO = "2026-04-22";
+const PRIVACY_POLICY_EFFECTIVE_DATE = new Intl.DateTimeFormat("en-US", {
+  dateStyle: "long",
+  timeZone: "UTC",
+}).format(new Date(`${PRIVACY_POLICY_EFFECTIVE_DATE_ISO}T00:00:00Z`));
 
 export const metadata: Metadata = {
   title: "Privacy Policy - Screen Time Hero",
@@ -412,16 +415,6 @@ export default function PrivacyPage() {
               <a href="mailto:support@screentimehero.com" className="text-[#3A7BFA] hover:underline">
                 support@screentimehero.com
               </a>
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-[#1C1F26] mb-3">14. EU / UK representative</h2>
-            <p className="text-gray-600 leading-relaxed">
-              If we appoint an EU or UK representative under Article 27 of the GDPR or UK GDPR, we will publish the relevant contact details here before this policy is published in those regions.
-            </p>
-            <p className="text-gray-600 leading-relaxed mt-3 italic">
-              [EU / UK representative contact details to be confirmed before publication.]
             </p>
           </section>
         </div>
