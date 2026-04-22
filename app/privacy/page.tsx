@@ -3,6 +3,9 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { SiteFooter } from "@/app/_components/SiteFooter";
 
+const PRIVACY_POLICY_EFFECTIVE_DATE = "April 22, 2026";
+const PRIVACY_POLICY_EFFECTIVE_DATE_ISO = "2026-04-22";
+
 export const metadata: Metadata = {
   title: "Privacy Policy - Screen Time Hero",
   description:
@@ -28,7 +31,10 @@ export default function PrivacyPage() {
       {/* Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-4xl font-bold text-[#1C1F26] mb-2">Privacy Policy</h1>
-        <p className="text-gray-500 mb-8">Effective Date: April 22, 2026</p>
+        <p className="text-gray-500 mb-8">
+          Effective Date:{" "}
+          <time dateTime={PRIVACY_POLICY_EFFECTIVE_DATE_ISO}>{PRIVACY_POLICY_EFFECTIVE_DATE}</time>
+        </p>
 
         <div className="prose prose-gray max-w-none space-y-8">
           <section>
@@ -93,11 +99,12 @@ export default function PrivacyPage() {
             <h2 className="text-2xl font-bold text-[#1C1F26] mb-3">3. Why we use your data and our legal basis (GDPR)</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-gray-600 text-sm border-collapse">
+                <caption className="sr-only">GDPR legal basis by processing purpose</caption>
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="py-2 pr-4 font-semibold text-[#1C1F26]">Purpose</th>
-                    <th className="py-2 pr-4 font-semibold text-[#1C1F26]">Data used</th>
-                    <th className="py-2 font-semibold text-[#1C1F26]">Legal basis (GDPR Art. 6)</th>
+                    <th scope="col" className="py-2 pr-4 font-semibold text-[#1C1F26]">Purpose</th>
+                    <th scope="col" className="py-2 pr-4 font-semibold text-[#1C1F26]">Data used</th>
+                    <th scope="col" className="py-2 font-semibold text-[#1C1F26]">Legal basis (GDPR Art. 6)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -182,11 +189,12 @@ export default function PrivacyPage() {
             </p>
             <div className="overflow-x-auto mt-4">
               <table className="w-full text-left text-gray-600 text-sm border-collapse">
+                <caption className="sr-only">Service providers and data shared with each</caption>
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="py-2 pr-4 font-semibold text-[#1C1F26]">Provider</th>
-                    <th className="py-2 pr-4 font-semibold text-[#1C1F26]">Role</th>
-                    <th className="py-2 font-semibold text-[#1C1F26]">Data shared</th>
+                    <th scope="col" className="py-2 pr-4 font-semibold text-[#1C1F26]">Provider</th>
+                    <th scope="col" className="py-2 pr-4 font-semibold text-[#1C1F26]">Role</th>
+                    <th scope="col" className="py-2 font-semibold text-[#1C1F26]">Data shared</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -252,10 +260,11 @@ export default function PrivacyPage() {
             </p>
             <div className="overflow-x-auto mt-4">
               <table className="w-full text-left text-gray-600 text-sm border-collapse">
+                <caption className="sr-only">Data retention windows by category</caption>
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="py-2 pr-4 font-semibold text-[#1C1F26]">Category</th>
-                    <th className="py-2 font-semibold text-[#1C1F26]">Retention</th>
+                    <th scope="col" className="py-2 pr-4 font-semibold text-[#1C1F26]">Category</th>
+                    <th scope="col" className="py-2 font-semibold text-[#1C1F26]">Retention</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -409,10 +418,12 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-bold text-[#1C1F26] mb-3">14. EU / UK representative</h2>
             <p className="text-gray-600 leading-relaxed">
-              Under Article 27 of the GDPR and Article 27 of the UK GDPR, we have appointed a representative in the European Union and the United Kingdom. If you are in the EEA, the UK, or Switzerland, you may contact our representative directly for any question about how we handle your personal information.
+              Under Article 27 of the GDPR and Article 27 of the UK GDPR, our EU and UK representative contact details are provided below. If you are in the EEA, the UK, or Switzerland, you may contact the relevant representative directly with questions about how we handle your personal information.
             </p>
             <p className="text-gray-600 leading-relaxed mt-3 italic">
-              [EU / UK representative name and address to be confirmed before launch.]
+              EU Representative: [Name], [Address], [Email]
+              <br />
+              UK Representative: [Name], [Address], [Email]
             </p>
           </section>
         </div>
