@@ -50,7 +50,7 @@ export default function PrivacyPage() {
               <a href="mailto:support@screentimehero.com" className="text-[#3A7BFA] hover:underline">
                 support@screentimehero.com
               </a>
-              . See Section 14 for additional contacts including our EU representative.
+              . See Section 14 for any additional jurisdiction-specific contact details that apply.
             </p>
           </section>
 
@@ -418,12 +418,10 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-bold text-[#1C1F26] mb-3">14. EU / UK representative</h2>
             <p className="text-gray-600 leading-relaxed">
-              Under Article 27 of the GDPR and Article 27 of the UK GDPR, our EU and UK representative contact details are provided below. If you are in the EEA, the UK, or Switzerland, you may contact the relevant representative directly with questions about how we handle your personal information.
+              If we appoint an EU or UK representative under Article 27 of the GDPR or UK GDPR, we will publish the relevant contact details here before this policy is published in those regions.
             </p>
             <p className="text-gray-600 leading-relaxed mt-3 italic">
-              EU Representative: [Name], [Address], [Email]
-              <br />
-              UK Representative: [Name], [Address], [Email]
+              [EU / UK representative contact details to be confirmed before publication.]
             </p>
           </section>
         </div>
