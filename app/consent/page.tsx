@@ -61,7 +61,7 @@ function ConsentPageInner() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/consent/${token}`, {
+        const res = await fetch(`${API_BASE}/api/consent/${encodeURIComponent(token)}`, {
           method: "GET",
           headers: { Accept: "application/json" },
         });
@@ -118,7 +118,7 @@ function ConsentPageInner() {
     if (!token || !canSubmit) return;
     setState({ kind: "submitting" });
     try {
-      const res = await fetch(`${API_BASE}/api/consent/${token}/grant`, {
+      const res = await fetch(`${API_BASE}/api/consent/${encodeURIComponent(token)}/grant`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
