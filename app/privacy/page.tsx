@@ -53,7 +53,7 @@ export default function PrivacyPage() {
               <a href="mailto:support@screentimehero.com" className="text-[#3A7BFA] hover:underline">
                 support@screentimehero.com
               </a>
-              . See Section 14 for any additional jurisdiction-specific contact details that apply.
+              .
             </p>
           </section>
 
