@@ -150,7 +150,8 @@ function ConsentPageInner() {
           body.error ??
           "We couldn't record your consent right now. Please refresh and try again.",
       });
-    } catch {
+    } catch (err) {
+      console.error("[ConsentPage] grant request failed:", err);
       setState({
         kind: "error",
         message: "We couldn't reach the server. Check your internet and try again.",
